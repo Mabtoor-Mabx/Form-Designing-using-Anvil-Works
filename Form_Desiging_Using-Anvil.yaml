@@ -1,0 +1,558 @@
+allow_embedding: false
+config:
+  client: {}
+  server: {}
+correct_dependency_ids: {}
+db_schema:
+  job_applications:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: name
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: age
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      name: qualifications
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      name: skills
+      type: simpleObject
+    - admin_ui: {order: 4, width: 200}
+      name: why_hire_you
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      name: uploaded_file
+      type: media
+    - admin_ui: {order: 6, width: 200}
+      name: terms_accepted
+      type: bool
+    - admin_ui: {order: 7, width: 200}
+      name: submission_timestamp
+      type: datetime
+    server: full
+    title: job_applications
+dependency_code: {}
+dependency_ids: {}
+dependency_order: []
+exported_table_schema:
+- client: none
+  columns:
+    9MUxwBn_etQ=:
+      admin_ui: {order: 3, width: 200}
+      name: skills
+      type: simpleObject
+    Mo1_igo8QjA=:
+      admin_ui: {order: 5, width: 200}
+      name: uploaded_file
+      type: media
+    Z6VvAZgnUVA=:
+      admin_ui: {order: 4, width: 200}
+      name: why_hire_you
+      type: string
+    ezTc8+u385c=:
+      admin_ui: {order: 2, width: 200}
+      name: qualifications
+      type: string
+    hpJHQw54Rno=:
+      admin_ui: {order: 6, width: 200}
+      name: terms_accepted
+      type: bool
+    o0IKbB8aIy4=:
+      admin_ui: {order: 0, width: 200}
+      name: name
+      type: string
+    o5Ja8nPBIlU=:
+      admin_ui: {order: 7, width: 200}
+      name: submission_timestamp
+      type: datetime
+    sEjxoiREVIs=:
+      admin_ui: {order: 1, width: 200}
+      name: age
+      type: number
+  id: 993981
+  name: job_applications
+  python_name: job_applications
+  server: full
+extra_files: {__init__.py: IwojIFRoaXMgcmVwb3NpdG9yeSBpcyBhbiBBbnZpbCBhcHAuIExlYXJuIG1vcmUgYXQgaHR0cHM6Ly9hbnZpbC53b3Jrcy8KIyBUbyBydW4gdGhlIHNlcnZlci1zaWRlIGNvZGUgb24geW91ciBvd24gbWFjaGluZSwgcnVuOgojIHBpcCBpbnN0YWxsIGFudmlsLXVwbGluawojIHB5dGhvbiAtbSBhbnZpbC5ydW5fYXBwX3ZpYV91cGxpbmsgWW91ckFwcFBhY2thZ2VOYW1lCgpfX3BhdGhfXyA9IFtfX3BhdGhfX1swXSArICIvc2VydmVyX2NvZGUiLCBfX3BhdGhfX1swXSArICIvY2xpZW50X2NvZGUiXQo=}
+forms:
+- class_name: Form1
+  code: |-
+    from ._anvil_designer import Form1Template
+    from anvil import *
+    import anvil.server
+
+    class Form1(Form1Template):
+      def __init__(self, **properties):
+        self.init_components(**properties)
+
+      def submit_button_click(self, **event_args):
+        # Get values from form components
+        name = self.name_text_box.text
+        age = float(self.age_text_box.text)
+        qualifications = self.qualifications_text_box.text
+
+        # Assuming the skills dropdown allows multiple selections
+        skills = self.skills_drop_down.selected_value
+
+        why_hire_you = self.why_hire_you_text_area.text
+        uploaded_file = self.file_loader.file
+        terms_accepted = self.terms_and_conditions_checkbox.checked
+
+        # Show a notification while the submission is in progress
+        with anvil.Notification("Submitting Application...", timeout=None):
+          # Call the backend function to submit the data
+          response = anvil.server.call(
+            'submit_job_application',
+            name,
+            age,
+            qualifications,
+            skills,
+            why_hire_you,
+            uploaded_file,
+            terms_accepted
+          )
+
+        # Handle the response from the server
+        if response['status'] == 'success':
+          anvil.Notification(response['message'], style='success').show()
+
+          # Clear form fields on successful submission
+          self.name_text_box.text = None
+          self.age_text_box.text = None
+          self.qualifications_text_box.text = None
+          self.skills_drop_down.selected_value = None
+          self.why_hire_you_text_area.text = None
+          self.file_loader.clear()
+          self.terms_and_conditions_checkbox.checked = False
+
+        else:
+          anvil.Notification(response['message'], style='danger').show()
+  components:
+  - components:
+    - layout_properties: {grid_position: 'GUMHPL,YDJZZM'}
+      name: label_1
+      properties: {align: center, bold: true, font: Palatino Linotype, font_size: 25, text: 'Want to join best company in town?'}
+      type: Label
+    - layout_properties: {grid_position: 'NECDQN,AJCPTZ'}
+      name: label_2
+      properties: {font: Palatino Linotype, font_size: 20, text: Enter Your Full name}
+      type: Label
+    - layout_properties: {grid_position: 'LFPKWH,JLSEBW'}
+      name: name_text_box
+      properties: {font: Palatino Linotype, font_size: 15, placeholder: Write Your Name}
+      type: TextBox
+    - layout_properties: {grid_position: 'PPYEYX,FNFQJF'}
+      name: label_3
+      properties: {font: Palatino Linotype, font_size: 20, text: Write Your Age}
+      type: Label
+    - layout_properties: {grid_position: 'MDMAJS,ZZMSDT'}
+      name: age_text_box
+      properties: {font: Palatino Linotype, font_size: 15, placeholder: Write Your Age}
+      type: TextBox
+    - layout_properties: {grid_position: 'VQGEUT,CFNRSD'}
+      name: label_4
+      properties: {font: Palatino Linotype, font_size: 20, text: Qualifications}
+      type: Label
+    - layout_properties: {grid_position: 'FZWMTC,MKQEXW'}
+      name: qualifications_text_box
+      properties: {font: Palatino Linotype, font_size: 15, placeholder: Write your Qualifications}
+      type: TextBox
+    - layout_properties: {grid_position: 'XBXLFH,BCKPDP'}
+      name: label_5
+      properties: {font: Palatino Linotype, font_size: 20, text: Skills}
+      type: Label
+    - layout_properties: {grid_position: 'EFWOYR,ESTYPF'}
+      name: skills_drop_down
+      properties:
+        font: Palatino Linotype
+        font_size: 15
+        items: [WEB DEVELOPEMENT, APP DEVELOPEMENT, MACHINE LEARNING, AI DEVELOPEMENT, DATA SCIENCE, DATA ANALYTICS, BACKEND DEVELOPEMENT]
+      type: DropDown
+    - layout_properties: {grid_position: 'NHESCO,FFWEIU'}
+      name: label_6
+      properties: {font: Palatino Linotype, font_size: 20, text: 'Why should we hire you?'}
+      type: Label
+    - layout_properties: {grid_position: 'XOFYRE,ODGKLA'}
+      name: why_hire_you_text_area
+      properties: {font: Palatino Linotype, font_size: 15, placeholder: 'Why we hire you???'}
+      type: TextBox
+    - layout_properties: {grid_position: 'SOAKXB,SSDFIJ'}
+      name: label_7
+      properties: {font: Palatino Linotype, font_size: 20, text: Upload Your Resume}
+      type: Label
+    - layout_properties: {grid_position: 'QPOTFW,QLMFIU'}
+      name: file_loader
+      properties: {font: Palatino Linotype, font_size: 15, text: Upload Your Resume}
+      type: FileLoader
+    - layout_properties: {grid_position: 'CDSSFI,KXZKUM'}
+      name: label_8
+      properties: {font: Palatino Linotype, font_size: 20, text: Terms and Conditions}
+      type: Label
+    - layout_properties: {grid_position: 'ETMIFS,RTKAUS'}
+      name: terms_and_conditions_checkbox
+      properties: {font: Palatino Linotype, font_size: 15, text: Allow Terms and Conditions}
+      type: CheckBox
+    - event_bindings: {click: submit_button_click}
+      layout_properties: {grid_position: 'OVGWWZ,ESQZLX'}
+      name: submit_button
+      properties: {font: Palatino Linotype, font_size: 15, text: Submit the form}
+      type: Button
+    layout_properties: {slot: default}
+    name: column_panel_1
+    properties: {col_widths: '{}'}
+    type: ColumnPanel
+  - layout_properties: {slot: logo}
+    name: link_1
+    properties: {align: center, font: Palatino Linotype, font_size: 15, text: Home, url: '#'}
+    type: Link
+  container:
+    properties: {html: '@theme:standard-page.html', visible: true}
+    type: HtmlTemplate
+  id: RZW43A77MFJ44JKXLDXLZEZSA2ZMRZWM
+  is_package: true
+modules: []
+name: Rally App 1
+native_deps: {head_html: '<link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400;600&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet" rel="preload" as="font" crossorigin="anonymous">'}
+package_name: Rally_App_1
+runtime_options:
+  client_version: '3'
+  server_spec: {base: python310-minimal, requirements: ''}
+  server_version: python3-sandbox
+  version: 2
+scripts: []
+server_modules:
+- code: "# Required Libraries\nimport anvil.server\nfrom anvil.tables import app_tables\nimport anvil.tables.query as q\nfrom datetime import datetime\nimport anvil.media\n\n# ====================================================================\n# Callable Function for Submitting the Form\n# This function is fast and returns a response immediately to avoid timeouts.\n# ====================================================================\n@anvil.server.callable\ndef submit_job_application(name, age, qualifications, skills, why_hire_you, uploaded_file, terms_accepted):\n  # Input Validation\n  if not name or not age or not qualifications or not why_hire_you or not terms_accepted:\n    return {\"status\": \"error\", \"message\": \"Please fill all the required Fields and accept the Terms and Conditions\"}  \n\n  if not uploaded_file:\n    return {\"status\": \"error\", \"message\": \"Please Upload a File!!!\"}\n\n  try:\n    # Add the data to the 'job_applications' table\n    new_row = app_tables.job_applications.add_row(\n      name=name,\n      age=age,\n      qualifications=qualifications,\n      skills=skills,\n      why_hire_you=why_hire_you,\n      uploaded_file=uploaded_file,\n      terms_accepted=terms_accepted,\n      submission_timestamp = datetime.now()\n    )\n\n    # Launch a background task to do any long-running processing (e.g., file scanning)\n    # This prevents the client from timing out.\n    anvil.server.launch_background_task(\"process_application_data\", new_row)\n\n    return {\"status\": \"success\", \"message\": \"Your Application Has been Submitted!!!\"}\n\n  except Exception as e:\n    print(f\"Error submitting application: {e}\")\n    return {\"status\": \"error\", \"message\": f\"Failed to submit application. Error: {e}\"}\n\n\n# ====================================================================\n# Background Task for Processing Data\n# This runs asynchronously and does not block the client.\n# ====================================================================\n@anvil.server.background_task\ndef process_application_data(application_row):\n  print(f\"Background task started for application ID: {application_row.get_id()}\")\n\n  # You can add code here to perform heavy operations, such as:\n  # - Reading the uploaded file and running an analysis.\n  # - Calling an external API to check for viruses.\n  # - Sending an email notification to the HR team.\n\n  # Example: Reading the uploaded file name\n  uploaded_file = application_row['uploaded_file']\n  if uploaded_file:\n    print(f\"Processing uploaded file: {uploaded_file.name}\")\n    # Example: Get the file's size and log it\n    file_size = uploaded_file.get_length()\n    print(f\"File size is {file_size} bytes.\")\n\n  print(\"Background task finished successfully.\")\n\n\n# ====================================================================\n# Callable Function for Retrieving Data (if needed for another page)\n# ====================================================================\n@anvil.server.callable\ndef get_job_applications():\n  return app_tables.job_applications.search(q.order_by(\"submission_timestamp\", ascending=False))"
+  id: '175420075632072188561193.46773'
+  name: ServerModule1
+services:
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/tables.yml
+startup_form: Form1
+theme:
+  assets:
+  - {content: PGRpdiBjbGFzcz0ic3RydWN0dXJlIj4KICA8ZGl2IGNsYXNzPSJuYXYtaG9sZGVyIj4KICAgIAogICAgPGEgY2xhc3M9InNpZGViYXItdG9nZ2xlIiBhbnZpbC1kcm9wLXNsb3Q9InRvcC1sZWZ0LWJ0biIgaHJlZj0iamF2YXNjcmlwdDp2b2lkKDApIj48aSBjbGFzcz0iZmEgZmEtYmFycyI+PC9pPjwvYT4KICAgIAogICAgPGRpdiBjbGFzcz0ibGVmdC1uYXYiPgogICAgICA8ZGl2IGNsYXNzPSJsb2dvIiBhbnZpbC1zbG90PSJsb2dvIj4KICAgICAgICA8ZGl2IGNsYXNzPSJwbGFjZWhvbGRlciBsb2dvLXBsYWNlaG9sZGVyIGFudmlsLWRlc2lnbmVyLW9ubHkiIGFudmlsLWlmLXNsb3QtZW1wdHk9ImxvZ28iIGFudmlsLWRyb3AtaGVyZT5BZGQgeW91ciBsb2dvIGhlcmU8L2Rpdj4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9ImxlZnQtbmF2LWNvbnRhaW5lciBhbnZpbC1tZWFzdXJlLXRoaXMiIGFudmlsLXNsb3QtcmVwZWF0PSJsZWZ0LW5hdiIgYW52aWwtZHJvcC1jb250YWluZXI9Ij4uYW52aWwtY29udGFpbmVyIj48L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0ibGVmdC1uYXYtcGxhY2Vob2xkZXIgYW52aWwtZGVzaWduZXItb25seSIgYW52aWwtaWYtc2xvdC1lbXB0eT0ibGVmdC1uYXYiIGFudmlsLWRyb3Atc2xvdD0ibGVmdC1uYXYiPgogICAgICAgIDxkaXYgY2xhc3M9InByb21wdCI+VG8gYWRkIGEgc2lkZWJhciwgZHJvcCBhIENvbHVtblBhbmVsIGhlcmUuPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CgogICAgPGRpdiBjbGFzcz0iY29udGVudCI+CiAgICAgIDxkaXYgYW52aWwtc2xvdC1yZXBlYXQ9ImRlZmF1bHQiIGNsYXNzPSJhbnZpbC1tZWFzdXJlLXRoaXMiPjwvZGl2PgogICAgICA8ZGl2IGNsYXNzPSJwbGFjZWhvbGRlciBkcm9wLWhlcmUiIGFudmlsLWlmLXNsb3QtZW1wdHk9ImRlZmF1bHQiIGFudmlsLWRyb3Atc2xvdD0iZGVmYXVsdCI+RHJvcCBhIENvbHVtblBhbmVsIGhlcmUuPC9kaXY+CiAgICA8L2Rpdj4KICAgIAogICAgPGRpdiBjbGFzcz0ibmF2LXNoaWVsZCI+PC9kaXY+CiAgPC9kaXY+CjwvZGl2PgoKPGRpdiBhbnZpbC1kcm9wLWRlZmF1bHQgYW52aWwtZHJvcC1yZWRpcmVjdD0iLnBsYWNlaG9sZGVyIiBhbnZpbC1kcm9wLWNvbnRhaW5lcj0iLmFudmlsLWNvbnRhaW5lciI+PC9kaXY+Cgo8c2NyaXB0PgogIHZhciBsbiA9ICQoJy5zdHJ1Y3R1cmUgPiAubmF2LWhvbGRlciA+IC5sZWZ0LW5hdicpOwogIGZ1bmN0aW9uIGhpZGVTaWRlYmFyKCkgewogICAgbG4uYW5pbWF0ZSh7bGVmdDogLWxuLm91dGVyV2lkdGgoKX0sIGZ1bmN0aW9uKCkgewogICAgICBsbi5yZW1vdmVDbGFzcygiaW4tdHJhbnNpdGlvbiBzaG93biIpLmFkZENsYXNzKCJoaWRkZW4iKTsKICAgICAgJCgnLm5hdi1zaGllbGQnKS5yZW1vdmVDbGFzcygic2hvd24iKTsKICAgICAgJCh3aW5kb3cpLnRyaWdnZXIoJ3Jlc2l6ZScpOwogICAgfSk7CiAgfQogIGZ1bmN0aW9uIHNob3dTaWRlYmFyKCkgewogICAgJCgnLm5hdi1zaGllbGQnKS5hZGRDbGFzcygic2hvd24iKTsKICAgIGxuLmFkZENsYXNzKCJzaG93biIpLnJlbW92ZUNsYXNzKCJoaWRkZW4iKS5jc3Moe2xlZnQ6ICItMTAwJSJ9KS5jc3Moe2xlZnQ6IC1sbi5vdXRlcldpZHRoKCl9KS5hbmltYXRlKHtsZWZ0OiAwfSwgZnVuY3Rpb24oKSB7CiAgICAgIGxuLnJlbW92ZUNsYXNzKCJpbi10cmFuc2l0aW9uIik7CiAgICB9KTsKICAgICQod2luZG93KS50cmlnZ2VyKCdyZXNpemUnKTsKICB9CiAgJCgnLnNpZGViYXItdG9nZ2xlLCAubmF2LXNoaWVsZCcpLm9mZignY2xpY2snKS5vbignY2xpY2snLCBmdW5jdGlvbigpIHsKICAgIGlmIChsbi5pcygiOnZpc2libGUiKSB8fCAkKCcubmF2LXNoaWVsZCcpLmlzKCIuc2hvd24iKSkgewogICAgICBoaWRlU2lkZWJhcigpOwogICAgfSBlbHNlIGlmKCFsbi5pcygiOmVtcHR5IikpIHsKICAgICAgc2hvd1NpZGViYXIoKTsKICAgIH0KICB9KTsKICAkKCcubGVmdC1uYXYnKS5vZmYoJ2NsaWNrJykub24oJ2NsaWNrJywgJ2EsIGJ1dHRvbicsIGZ1bmN0aW9uKCkgewogICAgaWYgKCQoJy5uYXYtc2hpZWxkJykuaXMoIjp2aXNpYmxlIikpIHsKICAgICAgJCgnLm5hdi1zaGllbGQnKS50cmlnZ2VyKCdjbGljaycpOwogICAgfQogIH0pOwogIAogIGZ1bmN0aW9uIHBpbkxlZnROYXYoKSB7CiAgICBpZiAod2luZG93LmlubmVyV2lkdGggPiA5OTgpIHsKICAgICAgbG4uYWRkQ2xhc3MoJ3Nob3duJykucmVtb3ZlQ2xhc3MoJ2hpZGRlbicpLmNzcyh7bGVmdDogJzBweCd9KQogICAgICAkKCcubmF2LXNoaWVsZCcpLmFkZENsYXNzKCdzaG93bicpCiAgICB9CiAgfQogIAogICQod2luZG93KS5vbigncmVzaXplJywgcGluTGVmdE5hdikKCjwvc2NyaXB0Pg==, id: XW5O2Z2YNVRMDEAO4G4BFDS64DNEJHJ5, name: standard-page.html}
+  - {content: Ym9keSB7CiAgZm9udC1mYW1pbHk6ICdSb2JvdG8gQ29uZGVuc2VkJywgc2Fucy1zZXJpZjsKICBmb250LXNpemU6IDE0cHg7CiAgZm9udC13ZWlnaHQ6IDMwMDsKICBiYWNrZ3JvdW5kLWNvbG9yOiAlY29sb3I6QmFja2dyb3VuZCU7CiAgY29sb3I6ICVjb2xvcjpPbiBCYWNrZ3JvdW5kJTsKfQoKLnBsb3QtY29udGFpbmVyLnBsb3RseSAubWFpbi1zdmcgLnBhcmNvb3JkcyAueS1heGlzIC5heGlzIC50aWNrID4gdGV4dCB7CiAgdGV4dC1zaGFkb3c6IG5vbmUgIWltcG9ydGFudDsKfQoKLnBsb3QtY29udGFpbmVyLnBsb3RseSAubWFpbi1zdmcgLnBhcmNvb3JkcyAueS1heGlzIC5heGlzID4gcGF0aC5kb21haW4gewogIHN0cm9rZTogI0M4QzhDQjsKfQoKLyogVGV4dCBhbmQgbGlua3MgKi8KCi5hbnZpbC1yb2xlLWRpc3BsYXkgewogIGZvbnQtc2l6ZTogNTdweDsKICBsaW5lLWhlaWdodDogNjRweDsKICBmb250LXdlaWdodDogMzAwOwp9CgouYW52aWwtcm9sZS1oZWFkbGluZSB7CiAgZm9udC1mYW1pbHk6IEVjemFyLCBzZXJpZjsKICBmb250LXNpemU6IDMycHg7CiAgbGluZS1oZWlnaHQ6IDQwcHg7CiAgZm9udC13ZWlnaHQ6IDQwMDsKfQoKLmFudmlsLXJvbGUtdGl0bGUgewogIGZvbnQtc2l6ZTogMjJweDsKICBsaW5lLWhlaWdodDogMjhweDsKICBmb250LXdlaWdodDogNDAwOwp9CgouYW52aWwtcm9sZS1ib2R5IHsKICBmb250LXNpemU6IDE0cHg7CiAgbGluZS1oZWlnaHQ6IDIwcHg7CiAgZm9udC13ZWlnaHQ6IDMwMDsKfQoKLmFudmlsLXJvbGUtaW5wdXQtcHJvbXB0IHsKICBmb250LXNpemU6IDE2cHg7CiAgbGluZS1oZWlnaHQ6IDEuNTsKfQoKLmFudmlsLXJvbGUtYm9keSA+IC5sYWJlbC10ZXh0LCAuYW52aWwtcm9sZS1ib2R5IC5saW5rLXRleHQgewogIHBhZGRpbmctdG9wOiAwOwogIHBhZGRpbmctYm90dG9tOiAwOwp9CgphIHsKICBjb2xvcjogJWNvbG9yOlByaW1hcnklOwp9CgphOmhvdmVyOm5vdChkaXNhYmxlZCkgewogIGNvbG9yOiAlY29sb3I6UHJpbWFyeSBDb250YWluZXIlOwp9CgphOmFjdGl2ZTpub3QoZGlzYWJsZWQpLCBhOmZvY3VzOm5vdChkaXNhYmxlZCl7CiAgb3BhY2l0eTogJWNvbG9yOlByaW1hcnkgQ29udGFpbmVyJTsKfQoKCgovKiBUZXh0IGJveGVzIGFuZCBhcmVhcyAqLwoKLmFudmlsLXRleHQtYm94LCAuYW52aWwtdGV4dC1hcmVhLCAuZm9ybS1jb250cm9sIHsKICBjb2xvcjogJWNvbG9yOk9uIFN1cmZhY2UgVmFyaWFudCU7CiAgYmFja2dyb3VuZC1jb2xvcjogJWNvbG9yOlN1cmZhY2UgVmFyaWFudCU7CiAgYm9yZGVyOiBub25lOwogIGJvcmRlci1yYWRpdXM6IDA7CiAgYm94LXNoYWRvdzogaW5zZXQgMCAtMXB4IDAgJWNvbG9yOlNlY29uZGFyeSU7Cn0KCi5hbnZpbC10ZXh0LWJveDpmb2N1cywgLmFudmlsLXRleHQtYXJlYTpmb2N1cywgLmZvcm0tY29udHJvbDpmb2N1cyB7CiAgYm94LXNoYWRvdzogaW5zZXQgMCAtMi4ycHggMCAlY29sb3I6T24gU3VyZmFjZSBWYXJpYW50JTsKICBib3JkZXItcmFkaXVzOiAwOwp9CgouYW52aWwtdGV4dC1ib3hbZGlzYWJsZWRdLCAuYW52aWwtdGV4dC1hcmVhW2Rpc2FibGVkXSwgLmZvcm0tY29udHJvbFtkaXNhYmxlZF0gewogIGJhY2tncm91bmQ6ICVjb2xvcjpEaXNhYmxlZCBDb250YWluZXIlOwp9CgovKiBCdXR0b25zICovCgouYnRuLCAuYnRuLWRlZmF1bHQsIC5maWxlLWxvYWRlciwgLmZpbGUtbG9hZGVyID4gbGFiZWwgeyAKICBmb250LXNpemU6IDE0cHg7CiAgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsKICBmb250LXdlaWdodDogYm9sZDsKICBsZXR0ZXItc3BhY2luZzogMnB4OwogIAogIGJvcmRlcjogMDsKICBiYWNrZ3JvdW5kLWNvbG9yOiB0cmFuc3BhcmVudDsKICBiYWNrZ3JvdW5kLWltYWdlOiBub25lOwogIGNvbG9yOiAlY29sb3I6T24gQmFja2dyb3VuZCU7CiAgdGV4dC1zaGFkb3c6IG5vbmU7CiAgYm94LXNoYWRvdzogbm9uZTsKICAtd2Via2l0LWJveC1zaGFkb3c6IG5vbmU7CiAgCiAgcG9zaXRpb246IHJlbGF0aXZlOwp9CgouYnRuOmhvdmVyLCAuYnRuLWRlZmF1bHQ6aG92ZXIgewogIGNvbG9yOiAlY29sb3I6T24gQmFja2dyb3VuZCU7CiAgYmFja2dyb3VuZC1jb2xvcjogJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMSU7CiAgb3V0bGluZTogbm9uZTsKICBiYWNrZ3JvdW5kLWltYWdlOiBub25lOwp9CgouYnRuOmZvY3VzLCAuYnRuOmFjdGl2ZTpmb2N1cywgLmJ0bi5hY3RpdmU6Zm9jdXMsIC5idG4uZm9jdXMsIC5idG46YWN0aXZlLmZvY3VzLCAuYnRuLmFjdGl2ZS5mb2N1cyB7CiAgY29sb3I6ICVjb2xvcjpPbiBCYWNrZ3JvdW5kJTsKICBiYWNrZ3JvdW5kLWNvbG9yOiAlY29sb3I6TGlnaHQgT3ZlcmxheSAyJTsKICBvdXRsaW5lOiBub25lOwogIG91dGxpbmUtb2Zmc2V0OiAwcHg7Cn0KCi5idG5bZGlzYWJsZWRdLCAuYnRuW2Rpc2FibGVkXTpob3ZlciwgLmJ0bltkaXNhYmxlZF06Zm9jdXMsIC5maWxlLWxvYWRlci5hbnZpbC1kaXNhYmxlZCA+IGxhYmVsLCAuZmlsZS1sb2FkZXIuYW52aWwtZGlzYWJsZWQgPiBsYWJlbDpob3ZlciB7IAogIGNvbG9yOiAlY29sb3I6T24gRGlzYWJsZWQlOwogIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50OyAhaW1wb3J0YW50Cn0KCi8qIElucHV0cyAqLwoKaW5wdXRbdHlwZT0iZmlsZSJdOmZvY3VzLCBpbnB1dFt0eXBlPSJyYWRpbyJdOmZvY3VzLCBpbnB1dFt0eXBlPSJjaGVja2JveCJdOmZvY3VzIHsKICBvdXRsaW5lOiAwOwp9CgouZmlsZS1sb2FkZXI6aG92ZXIgewogIGNvbG9yOiAlY29sb3I6T24gQmFja2dyb3VuZCU7Cn0KCi5maWxlLWxvYWRlciA+IGxhYmVsOmhvdmVyIHsKICBiYWNrZ3JvdW5kOiAlY29sb3I6TGlnaHQgT3ZlcmxheSAxJTsKfQoKLmNoZWNrYm94IGlucHV0LCAucmFkaW8gaW5wdXQgewogIC13ZWJraXQtYXBwZWFyYW5jZTogbm9uZTsKICBhcHBlYXJhbmNlOiBub25lOwogIHdpZHRoOiAxNXB4OwogIGhlaWdodDogMTVweDsKICBib3JkZXItcmFkaXVzOiAxcHg7CiAgYmFja2dyb3VuZDogJWNvbG9yOlN1cmZhY2UgVmFyaWFudCU7Cn0KCi5yYWRpbyBpbnB1dCB7CiAgYm9yZGVyLXJhZGl1cyA6IDUwJTsKfQoKLmNoZWNrYm94IGlucHV0OmhvdmVyLCAucmFkaW8gaW5wdXQ6aG92ZXIgewogIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgwZGVnLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAxJSwgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMSUpLCAlY29sb3I6U3VyZmFjZSBWYXJpYW50JTsgCn0KCi5jaGVja2JveCBpbnB1dFtkaXNhYmxlZF0sIHJhZGlvIGlucHV0W2Rpc2FibGVkXSB7CiAgYmFja2dyb3VuZDogJWNvbG9yOk9uIERpc2FibGVkJTsKfQoKLmNoZWNrYm94IGlucHV0W2Rpc2FibGVkXTpob3ZlciwgLnJhZGlvIGlucHV0W2Rpc2FibGVkXTpob3ZlciB7CiAgYmFja2dyb3VuZDogJWNvbG9yOk9uIERpc2FibGVkJTsKfQoKaW5wdXRbZGlzYWJsZWRdIH4gc3BhbiB7CiAgY29sb3I6ICVjb2xvcjpPbiBEaXNhYmxlZCU7CiAgY3Vyc29yOiBub3QtYWxsb3dlZDsKfQoKLmNoZWNrYm94IGlucHV0OmNoZWNrZWQsIC5yYWRpbyBpbnB1dDpjaGVja2VkIHsKICBiYWNrZ3JvdW5kLWNvbG9yOiAlY29sb3I6UHJpbWFyeSBDb250YWluZXIlOwp9CgouY2hlY2tib3ggaW5wdXQsIC5yYWRpbyBpbnB1dCB7CiAgICBkaXNwbGF5OiBmbGV4OwogICAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICAgIGp1c3RpZnktY29udGVudDogY2VudGVyOwp9CgouY2hlY2tib3ggaW5wdXQ6Y2hlY2tlZDpiZWZvcmUgewogIGZvbnQtZmFtaWx5OiAiRm9udEF3ZXNvbWUiOwogIGNvbnRlbnQ6ICJcZjAwYyI7CiAgZm9udC1zaXplOiAxMHB4Owp9CgouY2hlY2tib3ggaW5wdXQ6aW5kZXRlcm1pbmF0ZTpiZWZvcmUgewogIGZvbnQtZmFtaWx5OiAiRm9udEF3ZXNvbWUiOwogIGNvbnRlbnQ6ICJcZjA2OCI7CiAgZm9udC1zaXplOiAxMHB4Owp9CgoucmFkaW8gaW5wdXQ6Y2hlY2tlZDpiZWZvcmUgewogIGZvbnQtZmFtaWx5OiAiRm9udEF3ZXNvbWUiOwogIGNvbnRlbnQ6ICJcZjExMSI7CiAgZm9udC1zaXplOiA4cHg7Cn0KCi8qIENvbHVtbiBQYW5lbCAqLwoKLmFudmlsLXBhbmVsLWNvbCB7CiAgcGFkZGluZy1ib3R0b206IDEwcHg7CiAgbWFyZ2luLWJvdHRvbTogLTEwcHg7Cn0KCi8qIERhdGUgUGlja2VyICovCgouZGF0ZXJhbmdlcGlja2VyIHsKICBjb2xvcjogJWNvbG9yOk9uIEJhY2tncm91bmQlOwogIGJhY2tncm91bmQtY29sb3I6ICVjb2xvcjpTdXJmYWNlIFZhcmlhbnQlOwp9CgouZGF0ZXJhbmdlcGlja2VyOjpiZWZvcmUsIC5kYXRlcmFuZ2VwaWNrZXI6OmFmdGVyIHsKICBib3JkZXItYm90dG9tOiAwOwp9CgouZGF0ZXJhbmdlcGlja2VyIC5jYWxlbmRhci10YWJsZSB7CiAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7Cn0KCi5kYXRlcmFuZ2VwaWNrZXIgLmNhbGVuZGFyLXRhYmxlIHRkLm9mZiB7CiAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7IAogIGNvbG9yOiAlY29sb3I6RGlzYWJsZWQlICFpbXBvcnRhbnQ7Cn0KCi5kYXRlcmFuZ2VwaWNrZXIgLmNhbGVuZGFyLXRhYmxlIHRkLmF2YWlsYWJsZTpob3ZlciB7CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpMaWdodCBPdmVybGF5IDIlLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAyJSksICVjb2xvcjpTdXJmYWNlJTsKICBib3JkZXItcmFkaXVzOiA1MCU7Cn0KCi5kYXRlcmFuZ2VwaWNrZXIgdGQuYWN0aXZlLCAuZGF0ZXJhbmdlcGlja2VyIHRkLnN0YXJ0LWRhdGUuZW5kLWRhdGUuYXZhaWxhYmxlIHsKICBjb2xvcjogJWNvbG9yOlN1cmZhY2UgVmFyaWFudCU7CiAgYmFja2dyb3VuZC1jb2xvcjogJWNvbG9yOlByaW1hcnklOwogIGJvcmRlci1yYWRpdXM6IDUwJTsKfQoKLmRhdGVyYW5nZXBpY2tlciB0ZC5hY3RpdmU6aG92ZXIsIC5kYXRlcmFuZ2VwaWNrZXIgdGQuc3RhcnQtZGF0ZS5lbmQtZGF0ZTpob3ZlciB7CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpEYXJrIE92ZXJsYXkgMiUsICVjb2xvcjpEYXJrIE92ZXJsYXkgMiUpLCAlY29sb3I6UHJpbWFyeSU7Cn0KCi5kYXRlcmFuZ2VwaWNrZXIgc2VsZWN0IHsKICBjb2xvcjogJWNvbG9yOk9uIEJhY2tncm91bmQlOwogIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgwZGVnLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAxJSwgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMSUpLCAlY29sb3I6U3VyZmFjZSU7OwogIGJvcmRlcjogMDsKfQoKLmRhdGVyYW5nZXBpY2tlciBzZWxlY3Q6Zm9jdXMgewogIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgwZGVnLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAxJSwgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMSUpLCAlY29sb3I6U3VyZmFjZSU7CiAgYm9yZGVyLWJvdHRvbTogMS41cHggc29saWQgJWNvbG9yOk9uIFN1cmZhY2UgVmFyaWFudCU7Cn0KCi8qIERhdGEgZ3JpZHMgKi8KCi5hbnZpbC1kYXRhLWdyaWQgewogIGJhY2tncm91bmQ6ICVjb2xvcjpTdXJmYWNlIFZhcmlhbnQlOwp9CgouYW52aWwtZGF0YS1ncmlkPi5kYXRhLWdyaWQtY2hpbGQtcGFuZWw+ZGl2LmF1dG8tZ3JpZC1oZWFkZXIgewogIGJvcmRlci1ib3R0b206IDJweCBzb2xpZCAlY29sb3I6T3V0bGluZSU7Cn0KCi5hbnZpbC1kYXRhLXJvdy1wYW5lbD4uZGF0YS1yb3ctY29sIHsKICBwYWRkaW5nLWxlZnQ6IDIwcHg7CiAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkICVjb2xvcjpPdXRsaW5lJTsKfQoKLmFudmlsLWRhdGEtcm93LXBhbmVsPi5kYXRhLXJvdy1jb2w6bm90KDpsYXN0LWNoaWxkKSB7CiAgYm9yZGVyLXJpZ2h0OiAxcHggc29saWQgJWNvbG9yOlByaW1hcnkgT3ZlcmxheSAyJTsKfQoKLyogTW9kYWxzICovCgoubW9kYWwtY29udGVudCB7CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpQcmltYXJ5IE92ZXJsYXkgMSUsICVjb2xvcjpQcmltYXJ5IE92ZXJsYXkgMSUpLCAlY29sb3I6U3VyZmFjZSU7CiAgYm9yZGVyLXJhZGl1czogMnB4Owp9CgoubW9kYWwtZm9vdGVyIHsKICBib3JkZXI6IDA7Cn0KCi5tb2RhbC1oZWFkZXIgewogIHBhZGRpbmc6IDI0cHggMjRweCAwcHg7CiAgZm9udC1zaXplOiAyNHB4OwogIGxpbmUtaGVpZ2h0OiAzMnB4OwogIGJvcmRlcjogMDsKICBjb2xvcjogJWNvbG9yOk9uIFN1cmZhY2UlOwp9CgoubW9kYWwtYm9keSB7CiAgcGFkZGluZzogMTBweCAzMHB4Owp9CgouYWxlcnQtaW5mbyB7CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpQcmltYXJ5IE92ZXJsYXkgMiUsICVjb2xvcjpQcmltYXJ5IE92ZXJsYXkgMiUpLCAlY29sb3I6U3VyZmFjZSU7CiAgY29sb3I6ICVjb2xvcjpPbiBTdXJmYWNlJTsKICBib3JkZXI6IG5vbmU7CiAgLyogMTZkcCAqLyBib3gtc2hhZG93OiAwIDE2cHggMjRweCAycHggcmdiYSgwLCAwLCAwLCAwLjE0KSwgMCA2cHggMzBweCA1cHggcmdiYSgwLCAwLCAwLCAwLjEyKSwgMCA4cHggMTBweCAtNXB4IHJnYmEoMCwgMCwgMCwgMC4yKTsKfQoKLmFsZXJ0LWluZm8gYnV0dG9uLmNsb3NlLCAubW9kYWwtaGVhZGVyIGJ1dHRvbi5jbG9zZSB7CiAgY29sb3I6ICVjb2xvcjpPbiBTdXJmYWNlJTsKICB0ZXh0LXNoYWRvdzogbm9uZTsKfQoKLyogUm9sZXMgKi8KCi5hbnZpbC1yb2xlLWNhcmQgewogIGJhY2tncm91bmQ6ICVjb2xvcjpTdXJmYWNlIFZhcmlhbnQlOwogIHBhZGRpbmc6IDhweCAxMnB4Owp9CgouYW52aWwtcm9sZS1oZWFkaW5nIHsKICBmb250LXNpemU6IDQwcHg7CiAgZm9udC1mYW1pbHk6ICJFY3phciIsIHNlcmlmOwp9CgouYW52aWwtcm9sZS1maWxsZWQgLmJ0biwgLmFudmlsLXJvbGUtZmlsbGVkID4gbGFiZWwgewogIGJhY2tncm91bmQtY29sb3I6ICVjb2xvcjpQcmltYXJ5JTsKICBwYWRkaW5nOiA4cHggMTZweDsKICBib3JkZXItcmFkaXVzOiAxMHB4OwogIGNvbG9yOiAlY29sb3I6T24gUHJpbWFyeSU7Cn0KCi5hbnZpbC1yb2xlLWZpbGxlZCAuYnRuOmhvdmVyLCAuYW52aWwtcm9sZS1maWxsZWQgPiBsYWJlbDpob3ZlciB7CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpMaWdodCBPdmVybGF5IDElLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAxJSksICVjb2xvcjpQcmltYXJ5JTsKfQoKLmFudmlsLXJvbGUtZmlsbGVkIC5idG46YWN0aXZlLCAuYW52aWwtcm9sZS1maWxsZWQgLmJ0bjphY3RpdmU6Zm9jdXMsIC5hbnZpbC1yb2xlLWZpbGxlZCA+IGxhYmVsOmFjdGl2ZSwgLmFudmlsLXJvbGUtZmlsbGVkID4gbGFiZWw6YWN0aXZlOmZvY3VzewogIGNvbG9yOiAlY29sb3I6T24gUHJpbWFyeSU7CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpMaWdodCBPdmVybGF5IDIlLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAyJSksICVjb2xvcjpQcmltYXJ5JTsKfQoKLmFudmlsLXJvbGUtZmlsbGVkIC5idG5bZGlzYWJsZWRdLCAuYW52aWwtcm9sZS1maWxsZWQgLmJ0bltkaXNhYmxlZF06aG92ZXIsIC5hbnZpbC1yb2xlLWZpbGxlZC5hbnZpbC1kaXNhYmxlZCA+IGxhYmVsIHsKICBjb2xvcjogJWNvbG9yOk9uIERpc2FibGVkJTsKICBiYWNrZ3JvdW5kOiAlY29sb3I6RGlzYWJsZWQgQ29udGFpbmVyJTsKfQoKLmFudmlsLXJvbGUtb3V0bGluZWQgLmJ0biwgLmFudmlsLXJvbGUtb3V0bGluZWQgPiBsYWJlbCB7CiAgb3V0bGluZTogMnB4IHNvbGlkICVjb2xvcjpQcmltYXJ5JTsKICBib3JkZXItcmFkaXVzOiAxMHB4Owp9CgouYW52aWwtcm9sZS1vdXRsaW5lZCAuYnRuOmFjdGl2ZSwgLmFudmlsLXJvbGUtb3V0bGluZWQgLmJ0bjphY3RpdmU6Zm9jdXMsIC5hbnZpbC1yb2xlLW91dGxpbmVkID4gbGFiZWw6YWN0aXZlLCAuYW52aWwtcm9sZS1vdXRsaW5lZCA+IGxhYmVsOmFjdGl2ZTpmb2N1cyB7CiAgb3V0bGluZTogMnB4IHNvbGlkICVjb2xvcjpQcmltYXJ5JTsKICBib3JkZXItcmFkaXVzOiAxMHB4OwogIG91dGxpbmUtb2Zmc2V0OiAwcHg7Cn0KCi5hbnZpbC1yb2xlLW91dGxpbmVkIC5idG5bZGlzYWJsZWRdLCAuYW52aWwtcm9sZS1vdXRsaW5lZCAuYnRuW2Rpc2FibGVkXTpob3ZlciwgLmFudmlsLXJvbGUtb3V0bGluZWQuYW52aWwtZGlzYWJsZWQgPiBsYWJlbCB7CiAgb3V0bGluZTogMnB4IHNvbGlkICVjb2xvcjpPbiBEaXNhYmxlZCU7Cn0KCi5hbnZpbC1yb2xlLWlucHV0LWVycm9yLCAuYW52aWwtcm9sZS1pbnB1dC1lcnJvcjpmb2N1cywgLmFudmlsLWRhdGVwaWNrZXIuYW52aWwtcm9sZS1pbnB1dC1lcnJvciBpbnB1dCB7CiAgY29sb3I6ICVjb2xvcjpFcnJvciU7CiAgYm94LXNoYWRvdzogaW5zZXQgMCAtMi4ycHggMCAlY29sb3I6RXJyb3IlOwogIGJvcmRlci1yYWRpdXM6IDA7Cn0KCi5hbnZpbC1yb2xlLXRhZyB7CiAgY29sb3I6ICVjb2xvcjpCJTsKICBib3JkZXItcmFkaXVzOiA1cHg7CiAgcGFkZGluZzogMHB4IDVweDsKICBtYXJnaW4tcmlnaHQ6IDVweDsKfQoKLyogT3RoZXIgY2xhc3NlcyAqLwoKLmNvbnRlbnQgPiAucGxhY2Vob2xkZXIgewogIG1hcmdpbjogMTZweDsKICBjb2xvcjogIzg4ODsKICBmb250LXNpemU6IDE4cHg7CiAgb3V0bGluZTogMXB4IGRvdHRlZDsKICBwYWRkaW5nOiAxNnB4OwogIHRleHQtYWxpZ246IGNlbnRlcjsKfQoKLmxvZ28tcGxhY2Vob2xkZXIgewogIHBhZGRpbmc6IDVweDsKICBtYXJnaW46IDhweCAwcHg7CiAgd2lkdGg6IDU1cHg7CiAgdGV4dC1hbGlnbjogY2VudGVyOwogIGNvbG9yOiAjODg4OwogIG91dGxpbmU6IDFweCBkb3R0ZWQgIzg4ODsKfQoKLyogU2Nyb2xsYmFycyAqLwoKLmNvbnRlbnQ6Oi13ZWJraXQtc2Nyb2xsYmFyIHsKICB3aWR0aDogMTBweDsKfQoKLmNvbnRlbnQ6Oi13ZWJraXQtc2Nyb2xsYmFyLXRodW1iIHsKICB3aWR0aDogNnB4OwogIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgwZGVnLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAyJSwgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMiUpLCAlY29sb3I6U3VyZmFjZSU7CiAgYm9yZGVyLXJhZGl1czogNnB4OwogIC13ZWJraXQtYm94LXNoYWRvdzogaW5zZXQgMCAwIDJweCByZ2JhKDAsMCwwLC4yKTsKfQoKLmNvbnRlbnQ6Oi13ZWJraXQtc2Nyb2xsYmFyLXRyYWNrIHsKICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQoMGRlZywgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMSUsICVjb2xvcjpMaWdodCBPdmVybGF5IDElKSwgJWNvbG9yOlN1cmZhY2UlOwp9CgoubGVmdC1uYXY6Oi13ZWJraXQtc2Nyb2xsYmFyIHsKICB3aWR0aDogMTBweDsKfQoKLmxlZnQtbmF2Ojotd2Via2l0LXNjcm9sbGJhci10aHVtYiB7CiAgd2lkdGg6IDZweDsKICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQoMGRlZywgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMiUsICVjb2xvcjpMaWdodCBPdmVybGF5IDIlKSwgJWNvbG9yOlN1cmZhY2UlOwogIGJvcmRlci1yYWRpdXM6IDZweDsKICAtd2Via2l0LWJveC1zaGFkb3c6IGluc2V0IDAgMCAycHggcmdiYSgwLDAsMCwuMik7Cn0KCi5sZWZ0LW5hdjo6LXdlYmtpdC1zY3JvbGxiYXItdHJhY2sgewogIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgwZGVnLCAlY29sb3I6TGlnaHQgT3ZlcmxheSAxJSwgJWNvbG9yOkxpZ2h0IE92ZXJsYXkgMSUpLCAlY29sb3I6U3VyZmFjZSU7Cn0KCi8qIFNwaW5uZXIgKi8KLmFudmlsLXNwaW5uZXIgewogICAgLS1hbnZpbC1zcGlubmVyLWJnOiAlY29sb3I6U3VyZmFjZSBWYXJpYW50JTsKfQoKLyogUHV0IHRoaW5ncyBvbiBhIDRweCBncmlkICovCi5jb2wtcGFkZGluZy5jb2wtcGFkZGluZy10aW55IHsgcGFkZGluZzogMCAycHg7IH0KLmNvbHVtbi1wYW5lbC5jb2wtcGFkZGluZy10aW55ID4gLmFudmlsLXBhbmVsLXNlY3Rpb24gPiAuYW52aWwtcGFuZWwtc2VjdGlvbi1jb250YWluZXIgPiAuYW52aWwtcGFuZWwtc2VjdGlvbi1ndXR0ZXIgeyBtYXJnaW46IDAgLTJweDsgfQoKLmNvbC1wYWRkaW5nLmNvbC1wYWRkaW5nLXNtYWxsIHsgcGFkZGluZzogMCA0cHg7IH0KLmNvbHVtbi1wYW5lbC5jb2wtcGFkZGluZy1zbWFsbCA+IC5hbnZpbC1wYW5lbC1zZWN0aW9uID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tY29udGFpbmVyID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tZ3V0dGVyIHsgbWFyZ2luOiAwIC00cHg7IH0KCi5jb2wtcGFkZGluZy5jb2wtcGFkZGluZy1tZWRpdW0geyBwYWRkaW5nOiAwIDhweDsgfQouY29sdW1uLXBhbmVsLmNvbC1wYWRkaW5nLW1lZGl1bSA+IC5hbnZpbC1wYW5lbC1zZWN0aW9uID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tY29udGFpbmVyID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tZ3V0dGVyIHsgbWFyZ2luOiAwIC04cHg7IH0KCi5jb2wtcGFkZGluZy5jb2wtcGFkZGluZy1sYXJnZSB7IHBhZGRpbmc6IDAgMTJweDsgfQouY29sdW1uLXBhbmVsLmNvbC1wYWRkaW5nLWxhcmdlID4gLmFudmlsLXBhbmVsLXNlY3Rpb24gPiAuYW52aWwtcGFuZWwtc2VjdGlvbi1jb250YWluZXIgPiAuYW52aWwtcGFuZWwtc2VjdGlvbi1ndXR0ZXIgeyBtYXJnaW46IDAgLTEycHg7IH0KCi5jb2wtcGFkZGluZy5jb2wtcGFkZGluZy1odWdlIHsgcGFkZGluZzogMCAyMHB4OyB9Ci5jb2x1bW4tcGFuZWwuY29sLXBhZGRpbmctaHVnZSA+IC5hbnZpbC1wYW5lbC1zZWN0aW9uID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tY29udGFpbmVyID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tZ3V0dGVyIHsgbWFyZ2luOiAwIC0yMHB4OyB9CgouZmxvdy1wYW5lbC5mbG93LXNwYWNpbmctdGlueSA+IC5mbG93LXBhbmVsLWd1dHRlciB7IG1hcmdpbjogMCAtMnB4OyB9Ci5mbG93LXBhbmVsLmZsb3ctc3BhY2luZy10aW55ID4gLmZsb3ctcGFuZWwtZ3V0dGVyID4gLmZsb3ctcGFuZWwtaXRlbSB7IAogIG1hcmdpbi1sZWZ0OiAycHg7CiAgbWFyZ2luLXJpZ2h0OiAycHg7Cn0KCi5mbG93LXBhbmVsLmZsb3ctc3BhY2luZy1zbWFsbCA+IC5mbG93LXBhbmVsLWd1dHRlciB7IG1hcmdpbjogMCAtNHB4OyB9Ci5mbG93LXBhbmVsLmZsb3ctc3BhY2luZy1zbWFsbCA+IC5mbG93LXBhbmVsLWd1dHRlciA+IC5mbG93LXBhbmVsLWl0ZW0geyAKICBtYXJnaW4tbGVmdDogNHB4OwogIG1hcmdpbi1yaWdodDogNHB4Owp9CgouZmxvdy1wYW5lbC5mbG93LXNwYWNpbmctbWVkaXVtID4gLmZsb3ctcGFuZWwtZ3V0dGVyIHsgbWFyZ2luOiAwIC04cHg7IH0KLmZsb3ctcGFuZWwuZmxvdy1zcGFjaW5nLW1lZGl1bSA+IC5mbG93LXBhbmVsLWd1dHRlciA+IC5mbG93LXBhbmVsLWl0ZW0geyAKICBtYXJnaW4tbGVmdDogOHB4OwogIG1hcmdpbi1yaWdodDogOHB4Owp9CgouZmxvdy1wYW5lbC5mbG93LXNwYWNpbmctbGFyZ2UgPiAuZmxvdy1wYW5lbC1ndXR0ZXIgeyBtYXJnaW46IDAgLTEycHg7IH0KLmZsb3ctcGFuZWwuZmxvdy1zcGFjaW5nLWxhcmdlID4gLmZsb3ctcGFuZWwtZ3V0dGVyID4gLmZsb3ctcGFuZWwtaXRlbSB7IAogIG1hcmdpbi1sZWZ0OiAxMnB4OwogIG1hcmdpbi1yaWdodDogMTJweDsKfQoKLmZsb3ctcGFuZWwuZmxvdy1zcGFjaW5nLWh1Z2UgPiAuZmxvdy1wYW5lbC1ndXR0ZXIgeyBtYXJnaW46IDAgLTIwcHg7IH0KLmZsb3ctcGFuZWwuZmxvdy1zcGFjaW5nLWh1Z2UgPiAuZmxvdy1wYW5lbC1ndXR0ZXIgPiAuZmxvdy1wYW5lbC1pdGVteyAKICBtYXJnaW4tbGVmdDogMjBweDsKICBtYXJnaW4tcmlnaHQ6IDIwcHg7Cn0KCi8qIFBhZ2Ugc3RydWN0dXJlICovCi5zdHJ1Y3R1cmUgewogIGRpc3BsYXk6IGZsZXg7CiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjsKICBtaW4taGVpZ2h0OiAxMDB2aDsKICBtaW4taGVpZ2h0OiBjYWxjKDEwMHZoIC0gJWFudmlsLWJhbm5lci1oZWlnaHQlKTsKICBoZWlnaHQ6IDA7IC8qIFRvIG1ha2UgZmxleC1ncm93IHdvcmsgaW4gSUUgKi8KfQoKLyogVGhpcyBicmVha3MgdGhlIGRlc2lnbmVyJ3MgaGVpZ2h0IG1lYXN1cmVtZW50LiBJRSBpc24ndCBzdXBwb3J0ZWQgZm9yIHRoZSBkZXNpZ25lciwgc28gc2V0IGl0IGJhY2suICovCi5kZXNpZ25lciAuc3RydWN0dXJlIHsKICBoZWlnaHQ6IGluaXRpYWw7Cn0KCi5uYXYtaG9sZGVyIHsKICBmbGV4LWdyb3c6IDE7CiAgb3ZlcmZsb3cteTogYXV0bzsKfQoKQG1lZGlhIHByaW50IHsKICAubmF2LWhvbGRlciB7CiAgICBvdmVyZmxvdy15OiBpbml0aWFsOwogIH0KfQoKLyogTW9iaWxlIGFuZCBkZXNrdG9wIG1hcmdpbnMgZm9yIGNvbnRlbnQgKi8KLmNvbnRlbnQgPiAqID4gLmFudmlsLWNvbnRhaW5lciB7CiAgcGFkZGluZzogOHB4Owp9CgpAbWVkaWEobWluLXdpZHRoOjk5MXB4KSB7CiAgLmNvbnRlbnQgPiAqID4gLmFudmlsLWNvbnRhaW5lciB7CiAgICBwYWRkaW5nOiAxNnB4IDI0cHg7CiAgfQp9CgouY29udGVudCAuYW52aWwtbWVhc3VyZS10aGlzIHsKICBwYWRkaW5nLWJvdHRvbTogMXB4OyAvKiBQcmV2ZW50IG1hcmdpbiBjb2xsYXBzZSBtZXNzaW5nIHVwIGVtYmVkZGluZyAqLwp9CgovKiBBbGxvdyBvdmVyZmxvd3MgdG8gc2hvdyBkcm9wIHNoYWRvd3MgaW4gQ29sdW1uUGFuZWxzCiAgIFRoaXMgY2FuIGNyZWF0ZSB1bndhbnRlZCBzY3JvbGxiYXJzOyB3ZSBjb21wZW5zYXRlIGZvciB0aGlzIGF0IHRoZSB0b3AgbGV2ZWwgd2l0aCAubmF2LWhvbGRlciAuY29udGVudCB7b3ZlcmZsb3cteDogaGlkZGVuO30KKi8KLmFudmlsLWNvbnRhaW5lci1vdmVyZmxvdyB7CiAgb3ZlcmZsb3cteDogdmlzaWJsZTsKICBvdmVyZmxvdy15OiB2aXNpYmxlOwp9CgoubmF2LWhvbGRlciB7CiAgZGlzcGxheTogZmxleDsKICBhbGlnbi1pdGVtczogc3RyZXRjaDsKICBmbGV4LWRpcmVjdGlvbjogcm93Owp9CgoubmF2LWhvbGRlciAubGVmdC1uYXYgewogIHBvc2l0aW9uOiByZWxhdGl2ZTsKICBwYWRkaW5nOiAxMHB4OwogIGZsZXgtc2hyaW5rOiAwOwogIG1pbi13aWR0aDogMTYwcHg7CiAgbWF4LXdpZHRoOiA0MDBweDsKfQoKLmxvZ28gewogIG1hcmdpbi1ib3R0b206IDIwcHg7CiAgbWluLXdpZHRoOiA0MHB4Owp9CgoubmF2LXNoaWVsZCB7CiAgZGlzcGxheTogbm9uZTsKfQoKLnNpZGViYXItdG9nZ2xlIHsKICBkaXNwbGF5OiBub25lOwp9CgoubGVmdC1uYXYtY29udGFpbmVyIHsKICBtYXJnaW46IDEwcHg7Cn0KLyogTW9iaWxlICovCgpAbWVkaWEobWF4LXdpZHRoOjk5OHB4KSB7CiAgCiAgaHRtbDpub3QoLmRlc2lnbmVyKSAuc2lkZWJhci10b2dnbGUgewogICAgZGlzcGxheTogYmxvY2s7CiAgICBwYWRkaW5nOiA4cHggMHB4IDEwcHggMHB4OwogICAgdGV4dC1hbGlnbjogY2VudGVyOwogICAgbWFyZ2luOiAxMHB4OwogICAgd2lkdGg6IDM1cHg7CiAgICBoZWlnaHQ6IDM1cHg7CiAgICBjb2xvcjogJWNvbG9yOk9uIEJhY2tncm91bmQlOwogICAgYmFja2dyb3VuZDogJWNvbG9yOlByaW1hcnklOwogICAgYm9yZGVyLXJhZGl1czogNTAlOwogIH0KICAKICAgIGh0bWw6bm90KC5kZXNpZ25lcikgLnNpZGViYXItdG9nZ2xlOmZvY3VzIHsKICAgIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgwZGVnLCAlY29sb3I6RGFyayBPdmVybGF5IDElLCAlY29sb3I6RGFyayBPdmVybGF5IDElKSwgJWNvbG9yOlByaW1hcnklOwogIH0KICAKICBodG1sOm5vdCguZGVzaWduZXIpIC5uYXYtaG9sZGVyIHsKICAgIGRpc3BsYXk6IGJsb2NrOwogIH0KICBodG1sOm5vdCguZGVzaWduZXIpIC5uYXYtaG9sZGVyIC5sZWZ0LW5hdiB7CiAgICBwb3NpdGlvbjogZml4ZWQ7CiAgICB0b3A6IDA7CiAgICBib3R0b206IDA7CiAgICB3aWR0aDogY2FsYygxMDAlIC0gNTZweCk7CiAgICBtYXgtd2lkdGg6IDM2MHB4OwogICAgei1pbmRleDogMzsKICAgIGJvcmRlci1yaWdodDogbm9uZTsKICAvKiAxNmRwICovIGJveC1zaGFkb3c6IDAgMTZweCAyNHB4IDJweCByZ2JhKDAsIDAsIDAsIDAuMTQpLCAwIDZweCAzMHB4IDVweCByZ2JhKDAsIDAsIDAsIDAuMTIpLCAwIDhweCAxMHB4IC01cHggcmdiYSgwLCAwLCAwLCAwLjIpOwoKICAgIGRpc3BsYXk6IG5vbmU7CiAgICB0cmFuc2l0aW9uOiByaWdodCAwLjVzOwogIH0KICAKICBodG1sOm5vdCguZGVzaWduZXIpIC5uYXYtaG9sZGVyIC5sZWZ0LW5hdi5zaG93biB7CiAgICBkaXNwbGF5OiBibG9jazsKICB9CiAgCiAgLm5hdi1zaGllbGQuc2hvd24gewogICAgZGlzcGxheTogYmxvY2s7CiAgICBwb3NpdGlvbjogZml4ZWQ7CiAgICB0b3A6IDA7CiAgICBib3R0b206IDA7CiAgICBsZWZ0OiAwOwogICAgcmlnaHQ6IDA7CiAgICB6LWluZGV4OiAyOwogICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgwLDAsMCwwLjIpOwogIH0KIH0KCi5uYXYtaG9sZGVyIC5sZWZ0LW5hdiwgLmxlZnQtbmF2LXBsYWNlaG9sZGVyIHsKICBkaXNwbGF5OiBmbGV4OwogIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47CiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDBkZWcsICVjb2xvcjpQcmltYXJ5IE92ZXJsYXkgMSUsICVjb2xvcjpQcmltYXJ5IE92ZXJsYXkgMSUpLCAlY29sb3I6QmFja2dyb3VuZCU7CiAgZm9udC1zaXplOiAxNHB4OwogIGZvbnQtd2VpZ2h0OiA1MDA7CiAgY29sb3I6ICVjb2xvcjpPbiBTdXJmYWNlIFZhcmlhbnQlOwogIG92ZXJmbG93LXg6IGhpZGRlbjsKICBvdmVyZmxvdy15OiBhdXRvOwp9CgoubGVmdC1uYXYtcGxhY2Vob2xkZXIgewogIGRpc3BsYXk6IGJsb2NrOwogIHBhZGRpbmc6IDhweDsKICBsaW5lLWhlaWdodDogMTsKICB3aWR0aDogNThweDsKICBmbGV4LWdyb3c6IDE7Cn0KLmxlZnQtbmF2LXBsYWNlaG9sZGVyIC5wcm9tcHQgewogIGRpc3BsYXk6IGlubGluZS1ibG9jazsKICB3aGl0ZS1zcGFjZTogbm93cmFwOwogIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsMCkgcm90YXRlKC05MGRlZykgdHJhbnNsYXRlKC01MCUsMCkgdHJhbnNsYXRlKDE1cHgsMTZweCk7CiAgcGFkZGluZzogMjFweCAxNnB4OwogIGNvbG9yOiAjODg4OwogIG91dGxpbmU6IDFweCBkb3R0ZWQgIzg4ODsKICB2aXNpYmlsaXR5OiBoaWRkZW47Cn0KCi5hbnZpbC1oaWdobGlnaHQgLmxlZnQtbmF2LXBsYWNlaG9sZGVyIC5wcm9tcHQgewogIHZpc2liaWxpdHk6IHZpc2libGU7Cn0KCi5sZWZ0LW5hdiA+IC5jb2x1bW4tcGFuZWwgewogIHBhZGRpbmc6IDI0cHggMDsKfQoubGVmdC1uYXYgPiAuY29sdW1uLXBhbmVsID4gLmFudmlsLXBhbmVsLXNlY3Rpb24gPiAuYW52aWwtcGFuZWwtc2VjdGlvbi1jb250YWluZXI6bm90KC5mdWxsLXdpZHRoLXJvdykgewogIG1hcmdpbjogMCAxNnB4OwogIHdpZHRoOiBpbml0aWFsOwogIG1heC13aWR0aDogaW5pdGlhbDsKICBvdmVyZmxvdy14OiB2aXNpYmxlOwp9Ci5sZWZ0LW5hdiA+IC5jb2x1bW4tcGFuZWwgPiAuYW52aWwtcGFuZWwtc2VjdGlvbjpmaXJzdC1jaGlsZCA+IC5hbnZpbC1wYW5lbC1zZWN0aW9uLWNvbnRhaW5lci5mdWxsLXdpZHRoLXJvdyB7CiAgbWFyZ2luLXRvcDogLTI0cHg7Cn0KLmxlZnQtbmF2ID4gLmNvbHVtbi1wYW5lbCA+IC5hbnZpbC1wYW5lbC1zZWN0aW9uID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tY29udGFpbmVyID4gLmFudmlsLXBhbmVsLXNlY3Rpb24tZ3V0dGVyID4gLmFudmlsLXBhbmVsLXJvdyA+IC5hbnZpbC1wYW5lbC1jb2wgewogIG92ZXJmbG93LXg6IHZpc2libGU7Cn0KCi8qIE1ha2UgaWNvbnMgbG9vayBuaWNlICovCgouYW52aWwtY29tcG9uZW50LWljb24ubGVmdC1pY29uIHsKICB3aWR0aDogMDsKICBtYXJnaW4tcmlnaHQ6IDIwcHggIWltcG9ydGFudDsgCiAgcG9zaXRpb246IHJlbGF0aXZlOwp9CgouYW52aWwtY29tcG9uZW50LWljb24ubGVmdF9lZGdlLWljb24sIC5sZWZ0LW5hdiAuYW52aWwtY29tcG9uZW50LWljb24ucmlnaHRfZWRnZS1pY29uIHsKICBsZWZ0OiAxNnB4OwogIHBhZGRpbmctdG9wOiAycHg7CiAgd2lkdGg6IDA7Cn0KCi5hbnZpbC1jb21wb25lbnQtaWNvbi5yaWdodF9lZGdlLWljb24gewogIGxlZnQ6IGluaXRpYWw7CiAgcmlnaHQ6IDE2cHg7CiAgdG9wOiAwOwogIHBhZGRpbmctdG9wOiAycHg7Cn0KCi5oYXMtdGV4dCA+IC5hbnZpbC1jb21wb25lbnQtaWNvbi5sZWZ0LWljb24gewogICAgbWFyZ2luLXJpZ2h0OiAxLjNlbSAhaW1wb3J0YW50OyAKfQoKLyogU2lkZWJhciBsaW5rcyAoYW5kIGxhYmVscyB3aXRoIGVkZ2UgaWNvbnMpIGdvICsxNnB4IHdpZGVyCiAgIChUb3AtbGV2ZWwgY29sdW1ucyBpbiBDb2x1bW5QYW5lbHMgZ2V0IG92ZXJmbG93LXggdmlzaWJsZSBbc2VlIGFib3ZlXXRvIGVuYWJsZSB0aGlzKQoqLwoKLmxlZnQtbmF2IGEsIC5sZWZ0LW5hdiAuYW52aWwtbGFiZWwubGVmdF9lZGdlLWljb24sIC5sZWZ0LW5hdiAuYW52aWwtbGFiZWwucmlnaHRfZWRnZS1pY29uIHsKICBtYXJnaW46IDAgLTE2cHg7CiAgcGFkZGluZzogNHB4IDE2cHg7Cn0KCi5sZWZ0LW5hdiAuYW52aWwtY29tcG9uZW50LmxlZnRfZWRnZS1pY29uIHsKICBwYWRkaW5nLWxlZnQ6IDcycHg7Cn0KCi5sZWZ0LW5hdiBhOmhvdmVyLCAubGVmdC1uYXYgLmFudmlsLXJvbGUtc2VsZWN0ZWQgewogIGNvbG9yOiAlY29sb3I6RGFyayBPdmVybGF5IDIlOwp9CgouZGVzaWduZXIgLm5hdi1ob2xkZXIgLmxlZnQtbmF2IHsKICBtaW4td2lkdGg6IDU2cHg7Cn0KCi5kZXNpZ25lciAubmF2LWhvbGRlciAubGVmdC1uYXYgPiAuYW52aWwtY29tcG9uZW50IHsKICBtaW4td2lkdGg6IDE2MHB4Owp9CgoubmF2LWhvbGRlciAubGVmdC1uYXYgPiAuYW52aWwtY29tcG9uZW50IHsKICBtYXJnaW4tdG9wOiAwOwogIG1hcmdpbi1ib3R0b206IDA7Cn0KCi5uYXYtaG9sZGVyIC5jb250ZW50IHsKICBmbGV4OiAxOwogIG92ZXJmbG93LXg6IGhpZGRlbjsKfQoKLm5hdi1ob2xkZXIgPiAubG9nbyA+IC5wbGFjZWhvbGRlciB7IG91dGxpbmU6IDFweCBkb3R0ZWQ7IHBhZGRpbmctbGVmdDogMTZweDsgcGFkZGluZy1yaWdodDogMTZweDsgbWFyZ2luOiA4cHggOHB4IDA7fQo=, id: S3RDGCHQRITQCQ5UEJWN7VGZWYSE5CWL, name: theme.css}
+  parameters:
+    color_scheme:
+      colors:
+      - {color: '#1EB980', name: Primary}
+      - {color: '#005235', name: Primary Container}
+      - {color: '#003824', name: On Primary}
+      - {color: '#73FBBC', name: On Primary Container}
+      - {color: '#B4CCBC', name: Secondary}
+      - {color: '#364B3F', name: Secondary Container}
+      - {color: '#20352A', name: On Secondary}
+      - {color: '#D0E8D8', name: On Secondary Container}
+      - {color: '#A4CDDD', name: Tertiary}
+      - {color: '#234C5A', name: Tertiary Container}
+      - {color: '#063542', name: On Tertiary}
+      - {color: '#C0E9FA', name: On Tertiary Container}
+      - {color: '#D64D47', name: Error}
+      - {color: '#191C1A', name: Background}
+      - {color: '#191C1A', name: Surface}
+      - {color: '#E1E3DF', name: On Background}
+      - {color: '#E1E3DF', name: On Surface}
+      - {color: '#404943', name: Surface Variant}
+      - {color: '#C0C9C1', name: On Surface Variant}
+      - {color: '#8A938C', name: Outline}
+      - {color: 'rgba(208, 232, 216, 0.2)', name: Dark Overlay 1}
+      - {color: 'rgba(208, 232, 216, 0.5)', name: Dark Overlay 2}
+      - {color: 'rgba(208, 232, 216, 0.2)', name: Light Overlay 1}
+      - {color: 'rgba(208, 232, 216, 0.5)', name: Light Overlay 2}
+      - {color: 'rgba(133, 133, 139, 0.12)', name: Disabled Container}
+      - {color: '#85858B', name: On Disabled}
+      - {color: 'rgba(30, 185, 128, 0.05)', name: Primary Overlay 1}
+      - {color: 'rgba(30, 185, 128, 0.08)', name: Primary Overlay 2}
+      - {color: 'rgba(30, 185, 128, 0.11)', name: Primary Overlay 3}
+      preset_groups:
+      - name: Colour Scheme
+        options:
+        - colors:
+          - {color: '#6750A4', name: Primary}
+          - {color: '#EADDFF', name: Primary Container}
+          - {color: '#FFFFFF', name: On Primary}
+          - {color: '#21005E', name: On Primary Container}
+          - {color: '#625B71', name: Secondary}
+          - {color: '#E8DEF8', name: Secondary Container}
+          - {color: '#FFFFFF', name: On Secondary}
+          - {color: '#1E192B', name: On Secondary Container}
+          - {color: '#7D5260', name: Tertiary}
+          - {color: '#FFD8E4', name: Tertiary Container}
+          - {color: '#FFFFFF', name: On Tertiary}
+          - {color: '#370B1E', name: On Tertiary Container}
+          - {color: '#B3261E', name: Error}
+          - {color: '#FFFBFE', name: Background}
+          - {color: '#FFFBFE', name: Surface}
+          - {color: '#1C1B1F', name: On Background}
+          - {color: '#1C1B1F', name: On Surface}
+          - {color: '#E7E0EC', name: Surface Variant}
+          - {color: '#49454E', name: On Surface Variant}
+          - {color: '#79747E', name: Outline}
+          - {color: 'rgba(28, 27, 31, 0.38)', name: On Disabled}
+          - {color: 'rgba(28, 27, 31, 0.12)', name: Disabled Container}
+          - {color: 'rgba(255, 255, 255, 0.08)', name: Light Overlay 1}
+          - {color: 'rgba(255, 255, 255, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(30, 25, 43, 0.08)', name: Dark Overlay 1}
+          - {color: 'rgba(30, 25, 43, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(103, 80, 164, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(103, 80, 164, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(103, 80, 164, 0.11)', name: Primary Overlay 3}
+          name: Material Light
+        - colors:
+          - {color: '#D0BCFF', name: Primary}
+          - {color: '#4F378B', name: Primary Container}
+          - {color: '#371E73', name: On Primary}
+          - {color: '#EADDFF', name: On Primary Container}
+          - {color: '#CCC2DC', name: Secondary}
+          - {color: '#4A4458', name: Secondary Container}
+          - {color: '#332D41', name: On Secondary}
+          - {color: '#E8DEF8', name: On Secondary Container}
+          - {color: '#EFB8C8', name: Tertiary}
+          - {color: '#633B48', name: Tertiary Container}
+          - {color: '#492532', name: On Tertiary}
+          - {color: '#FFD8E4', name: On Tertiary Container}
+          - {color: '#F2B8B5', name: Error}
+          - {color: '#1C1B1F', name: Background}
+          - {color: '#1C1B1F', name: Surface}
+          - {color: '#E6E1E5', name: On Background}
+          - {color: '#E6E1E5', name: On Surface}
+          - {color: '#49454F', name: Surface Variant}
+          - {color: '#CAC4D0', name: On Surface Variant}
+          - {color: '#938F99', name: Outline}
+          - {color: 'rgba(230, 225, 229, 0.38)', name: On Disabled}
+          - {color: 'rgba(230, 225, 229, 0.12)', name: Disabled Container}
+          - {color: 'rgba(232, 222, 248, 0.08)', name: Light Overlay 1}
+          - {color: 'rgba(232, 222, 248, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(232, 222, 248, 0.08)', name: Dark Overlay 1}
+          - {color: 'rgba(232, 222, 248, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(208, 188, 255, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(208, 188, 255, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(208, 188, 255, 0.11)', name: Primary Overlay 3}
+          name: Material Dark
+        - colors:
+          - {color: '#1EB980', name: Primary}
+          - {color: '#005235', name: Primary Container}
+          - {color: '#003824', name: On Primary}
+          - {color: '#73FBBC', name: On Primary Container}
+          - {color: '#B4CCBC', name: Secondary}
+          - {color: '#364B3F', name: Secondary Container}
+          - {color: '#20352A', name: On Secondary}
+          - {color: '#D0E8D8', name: On Secondary Container}
+          - {color: '#A4CDDD', name: Tertiary}
+          - {color: '#234C5A', name: Tertiary Container}
+          - {color: '#063542', name: On Tertiary}
+          - {color: '#C0E9FA', name: On Tertiary Container}
+          - {color: '#D64D47', name: Error}
+          - {color: '#191C1A', name: Background}
+          - {color: '#191C1A', name: Surface}
+          - {color: '#E1E3DF', name: On Background}
+          - {color: '#E1E3DF', name: On Surface}
+          - {color: '#404943', name: Surface Variant}
+          - {color: '#C0C9C1', name: On Surface Variant}
+          - {color: '#8A938C', name: Outline}
+          - {color: 'rgba(208, 232, 216, 0.2)', name: Dark Overlay 1}
+          - {color: 'rgba(208, 232, 216, 0.5)', name: Dark Overlay 2}
+          - {color: 'rgba(208, 232, 216, 0.2)', name: Light Overlay 1}
+          - {color: 'rgba(208, 232, 216, 0.5)', name: Light Overlay 2}
+          - {color: 'rgba(133, 133, 139, 0.12)', name: Disabled Container}
+          - {color: '#85858B', name: On Disabled}
+          - {color: 'rgba(30, 185, 128, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(30, 185, 128, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(30, 185, 128, 0.11)', name: Primary Overlay 3}
+          name: Rally Dark
+        - colors:
+          - {color: '#006C48', name: Primary}
+          - {color: '#00A36C', name: Primary Container}
+          - {color: '#FFFFFF', name: On Primary}
+          - {color: '#002113', name: On Primary Container}
+          - {color: '#496455', name: Secondary}
+          - {color: '#CBEAD6', name: Secondary Container}
+          - {color: '#FFFFFF', name: On Secondary}
+          - {color: '#052014', name: On Secondary Container}
+          - {color: '#326576', name: Tertiary}
+          - {color: '#B8EAFF', name: Tertiary Container}
+          - {color: '#FFFFFF', name: On Tertiary}
+          - {color: '#001F28', name: On Tertiary Container}
+          - {color: '#D64D47', name: Error}
+          - {color: '#FBFDF8', name: Background}
+          - {color: '#FBFDF8', name: Surface}
+          - {color: '#191C1A', name: On Background}
+          - {color: '#191C1A', name: On Surface}
+          - {color: '#DCE5DD', name: Surface Variant}
+          - {color: '#404943', name: On Surface Variant}
+          - {color: '#707973', name: Outline}
+          - {color: 'rgba(5, 32, 20, 0.8)', name: Dark Overlay 1}
+          - {color: 'rgba(51, 51, 61, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(255, 255, 255, 0.8)', name: Light Overlay 1}
+          - {color: 'rgba(255, 255, 255, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(25, 28, 26, 0.12)', name: Disabled Container}
+          - {color: 'rgba(25, 28, 26, 0.38)', name: On Disabled}
+          - {color: 'rgba(0, 108, 72, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(0, 108, 72, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(0, 108, 72, 0.11)', name: Primary Overlay 3}
+          name: Rally Light
+        - colors:
+          - {color: '#006874', name: Primary}
+          - {color: '#96F0FF', name: Primary Container}
+          - {color: '#FFFFFF', name: On Primary}
+          - {color: '#001F24', name: On Primary Container}
+          - {color: '#486367', name: Secondary}
+          - {color: '#CBE8ED', name: Secondary Container}
+          - {color: '#FFFFFF', name: On Secondary}
+          - {color: '#031F23', name: On Secondary Container}
+          - {color: '#515E80', name: Tertiary}
+          - {color: '#DAE2FF', name: Tertiary Container}
+          - {color: '#FFFFFF', name: On Tertiary}
+          - {color: '#0C1A39', name: On Tertiary Container}
+          - {color: '#BA1A1A', name: Error}
+          - {color: '#FAFDFD', name: Background}
+          - {color: '#FAFDFD', name: Surface}
+          - {color: '#191C1D', name: On Background}
+          - {color: '#191C1D', name: On Surface}
+          - {color: '#DBE4E6', name: Surface Variant}
+          - {color: '#3F484A', name: On Surface Variant}
+          - {color: '#6F797A', name: Outline}
+          - {color: 'rgba(25, 28, 29, 0.38)', name: On Disabled}
+          - {color: 'rgba(25, 28, 29, 0.12)', name: Disabled Container}
+          - {color: 'rgba(255, 255, 255, 0.08)', name: Light Overlay 1}
+          - {color: 'rgba(255, 255, 255, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(3, 31, 35, 0.08)', name: Dark Overlay 1}
+          - {color: 'rgba(3, 31, 35, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(0, 104, 116, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(0, 104, 116, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(0, 104, 116, 0.11)', name: Primary Overlay 3}
+          name: Mykonos Light
+        - colors:
+          - {color: '#3CD9ED', name: Primary}
+          - {color: '#004F57', name: Primary Container}
+          - {color: '#00363D', name: On Primary}
+          - {color: '#96F0FF', name: On Primary Container}
+          - {color: '#AFCBD0', name: Secondary}
+          - {color: '#314B4F', name: Secondary Container}
+          - {color: '#1A3438', name: On Secondary}
+          - {color: '#CBE8ED', name: On Secondary Container}
+          - {color: '#B9C6ED', name: Tertiary}
+          - {color: '#394667', name: Tertiary Container}
+          - {color: '#23304F', name: On Tertiary}
+          - {color: '##DAE2FF', name: On Tertiary Container}
+          - {color: '#FFB4AB', name: Error}
+          - {color: '#191C1D', name: Background}
+          - {color: '#191C1D', name: Surface}
+          - {color: '#E1E3E3', name: On Background}
+          - {color: '#E1E3E3', name: On Surface}
+          - {color: '#3F484A', name: Surface Variant}
+          - {color: '#BFC8CA', name: On Surface Variant}
+          - {color: '#899294', name: Outline}
+          - {color: 'rgba(225, 227, 227, 0.38)', name: On Disabled}
+          - {color: 'rgba(225, 227, 227, 0.12)', name: Disabled Container}
+          - {color: 'rgba(203, 232, 237, 0.08)', name: Light Overlay 1}
+          - {color: 'rgba(203, 232, 237, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(203, 232, 237, 0.08)', name: Dark Overlay 1}
+          - {color: 'rgba(203, 232, 237, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(60, 217, 237, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(60, 217, 237, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(60, 217, 237, 0.11)', name: Primary Overlay 3}
+          name: Mykonos Dark
+        - colors:
+          - {color: '#9A4523', name: Primary}
+          - {color: '#FFDBCF', name: Primary Container}
+          - {color: '#FFFFFF', name: On Primary}
+          - {color: '#380D00', name: On Primary Container}
+          - {color: '#77574C', name: Secondary}
+          - {color: '#FFDBCF', name: Secondary Container}
+          - {color: '#FFFFFF', name: On Secondary}
+          - {color: '#2C160D', name: On Secondary Container}
+          - {color: '#695E2F', name: Tertiary}
+          - {color: '#F2E2A7', name: Tertiary Container}
+          - {color: '#FFFFFF', name: On Tertiary}
+          - {color: '#221B00', name: On Tertiary Container}
+          - {color: '#BA1A1A', name: Error}
+          - {color: '#FFFBFF', name: Background}
+          - {color: '#FFFBFF', name: Surface}
+          - {color: '#201A18', name: On Background}
+          - {color: '#201A18', name: On Surface}
+          - {color: '#F5DED6', name: Surface Variant}
+          - {color: '#53433E', name: On Surface Variant}
+          - {color: '#85736D', name: Outline}
+          - {color: 'rgba(32, 26, 24, 0.38)', name: On Disabled}
+          - {color: 'rgba(32, 26, 24, 0.12)', name: Disabled Container}
+          - {color: 'rgba(255, 255, 255, 0.08)', name: Light Overlay 1}
+          - {color: 'rgba(255, 255, 255, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(44, 22, 13, 0.08)', name: Dark Overlay 1}
+          - {color: 'rgba(44, 22, 13, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(154, 69, 35, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(154, 69, 35, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(154, 69, 35, 0.11)', name: Primary Overlay 3}
+          name: Manarola Light
+        - colors:
+          - {color: '#FFB59B', name: Primary}
+          - {color: '#7B2E0E', name: Primary Container}
+          - {color: '#5B1A00', name: On Primary}
+          - {color: '#FFDBCF', name: On Primary Container}
+          - {color: '#E7BDB0', name: Secondary}
+          - {color: '#5D4036', name: Secondary Container}
+          - {color: '#442A21', name: On Secondary}
+          - {color: '#FFDBCF', name: On Secondary Container}
+          - {color: '#D5C68E', name: Tertiary}
+          - {color: '#50461A', name: Tertiary Container}
+          - {color: '#393005', name: On Tertiary}
+          - {color: '#F2E2A7', name: On Tertiary Container}
+          - {color: '#FFB4AB', name: Error}
+          - {color: '#201A18', name: Background}
+          - {color: '#201A18', name: Surface}
+          - {color: '#EDE0DC', name: On Background}
+          - {color: '#EDE0DC', name: On Surface}
+          - {color: '#53433E', name: Surface Variant}
+          - {color: '#D8C2BB', name: On Surface Variant}
+          - {color: '#A08D86', name: Outline}
+          - {color: 'rgba(237, 224, 220, 0.38)', name: On Disabled}
+          - {color: 'rgba(237, 224, 220, 0.12)', name: Disabled Container}
+          - {color: 'rgba(255, 219, 207, 0.08)', name: Light Overlay 1}
+          - {color: 'rgba(255, 219, 207, 0.12)', name: Light Overlay 2}
+          - {color: 'rgba(255, 219, 207, 0.08)', name: Dark Overlay 1}
+          - {color: 'rgba(255, 219, 207, 0.12)', name: Dark Overlay 2}
+          - {color: 'rgba(255, 181, 155, 0.05)', name: Primary Overlay 1}
+          - {color: 'rgba(255, 181, 155, 0.08)', name: Primary Overlay 2}
+          - {color: 'rgba(255, 181, 155, 0.11)', name: Primary Overlay 3}
+          name: Manarola Dark
+    roles:
+    - components: [Button, FileLoader]
+      name: filled
+    - components: [Button, FileLoader]
+      display_in_toolbox: false
+      name: outlined
+    - components: [TextBox, TextArea, DatePicker]
+      name: input-error
+    - components: [ColumnPanel]
+      display_in_toolbox: true
+      name: card
+      title: Card
+    - components: [Label, Link]
+      name: display
+    - components: [Label, Link]
+      name: headline
+    - components: [Label, Link]
+      name: title
+    - components: [Label, Link]
+      name: body
+    - components: [Label, Link]
+      name: input-prompt
+  templates:
+  - description: A page with an a left-side navigation panel.
+    form:
+      class_name: Form
+      code: "from ._anvil_designer import $NAME$Template\nfrom anvil import *\n\nclass $NAME$($NAME$Template):\n\n  def __init__(self, **properties):\n    # Set Form properties and Data Bindings.\n    self.init_components(**properties)\n\n    # Any code you write here will run before the form opens.\n    \n"
+      components:
+      - layout_properties: {slot: default}
+        name: content_panel
+        properties: {}
+        type: ColumnPanel
+      container:
+        properties: {html: '@theme:standard-page.html'}
+        type: HtmlTemplate
+      is_package: true
+    img: /img/form-templates/rally.png
+    name: Standard Page
